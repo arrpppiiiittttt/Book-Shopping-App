@@ -1,0 +1,51 @@
+﻿@model IEnumerable<ecommproject2.Models.Product>
+
+@{
+    ViewData["Title"] = "Discontinue Products";
+}
+
+<h2 class="mb-4">Discontinue Products</h2>
+
+<table class="table table-striped table-bordered">
+    <thead>
+        <tr>
+            <th>Product ID</th>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Author</th>
+            <th>ISBN</th>
+            <th>Price</th>
+            <th>Price50</th>
+            <th>Price100</th>
+            <th>Discontinue</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var product in Model)
+        {
+            <tr>
+                <td>@product.Id</td>
+                <td>@product.Title</td>
+                <td>@(product.Description.Length > 50 ? product.Description.Substring(0, 47) + "..." : product.Description)</td>
+                <td>@product.Author</td>
+                <td>@product.ISBN</td>
+                <td>$@product.Price</td>
+                <td>$@product.Price50</td>
+                <td>$@product.Price100</td>
+                <td>
+                    @if (!product.IsDiscontinued)
+                    {
+                        <form asp-action="DiscontinueProduct" method="post" asp-controller="Product">
+                            <input type="hidden" name="productId" value="@product.Id" />
+                            <button type="submit" class="btn btn-danger btn-sm">Discontinue</button>
+                        </form>
+                    }
+                    else
+                    {
+                        <span class="text-muted">Discontinued</span>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

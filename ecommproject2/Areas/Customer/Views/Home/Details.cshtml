@@ -1,0 +1,210 @@
+﻿@model ecommproject2.Models.ShoppingCart
+<form method="post">
+    <input type="hidden" asp-for="@Model.ProductId" />
+    <div class="container backgroundWhite">
+        <div class="card">
+            <div class="card-header bg-light text-light ml-0 row container">
+                <div class="col-12 col-md-6">
+                    <h1 class="text-primary">@Model.Product.Title</h1>
+                    <p class="text-warning">by @Model.Product.Author</p>
+                </div>
+                <div class="col-12 col-md-6 text-md-right pt-4">
+                    <span class="badge badge-success pt-2" style="height:30px;">@Model.Product.coverType.Name</span>
+                    <span class="badge badge-warning pt-2" style="height:30px;">@Model.Product.category.Name</span>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="container rounded p-2">
+                    <div class="row">
+                        <div class="col-8 col-lg-8">
+
+                            <div class="row pl-2">
+                                <h5 class="text-muted">ISBN : @Model.Product.ISBN</h5>
+                            </div>
+                            <div class="row pl-2">
+                                <h5 class="text-muted pb-2">List Price: <strike>$ @Model.Product.ListPrice.ToString("0.00")</strike></h5>
+                            </div>
+                            <div class="row text-center pl-2">
+                                <div class="p-1 col-2 bg-secondary border-bottom">
+                                    <div>Quantity</div>
+                                </div>
+                                <div class="p-1 col-2 bg-secondary border-bottom">
+                                    <div>1-49</div>
+                                </div>
+                                <div class="p-1 col-2 bg-secondary border-bottom">
+                                    <div>50-99</div>
+                                </div>
+                                <div class="p-1 col-2 bg-secondary border-bottom">
+                                    <div>100+</div>
+                                </div>
+                            </div>
+                            <div class="row text-center pl-2" style="color:maroon; font-weight:bold">
+                                <div class="p-1 col-2 bg-secondary">
+                                    <div>Price</div>
+                                </div>
+                                <div class="p-1 col-2 bg-secondary">
+                                    <div>@Model.Product.Price</div>
+                                </div>
+                                <div class="p-1 col-2 bg-secondary">
+                                    <div>@Model.Product.Price50</div>
+                                </div>
+                                <div class="p-1 col-2 bg-secondary">
+                                    <div>@Model.Product.Price100</div>
+                                </div>
+                            </div>
+                            <div class="row pl-2">
+                                <p class="text-secondary">@Html.Raw(@Model.Product.Description)</p>
+                            </div>
+                            <div class="row pl-2">
+                                <div class="col-2 text-primary"><h4>Count</h4></div>
+                                <div class="col-10"><input class="form-control" type="number" min="0" asp-for="@Model.Count" /></div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-lg-3 offset-lg-1 text-center">
+                            <img src="@Model.Product.ImageUrl" width="100%" class="rounded" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <div class="row">
+                    <div class="col-12 col-md-6 pb-1">
+                        <a class="btn btn-success form-control  btn-square btn-lg" asp-action="Index" style="height:50px;">Back to List</a>
+                    </div>
+                    <div class="col-12 col-md-6 pb-1">
+                        @if (!Model.Product.IsDiscontinued)
+                        {
+                            <button type="submit" value="Add to Cart" class="btn btn-primary btn-square btn-lg form-control" style="height:50px;">Add to Cart</button>
+                        }
+                        else
+                        {
+                            <button class="btn btn-secondary btn-square btn-lg form-control" style="height:50px;" disabled>Sold Out</button>
+                        }
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</form> 
+@* 
+@model ecommproject2.Models.ShoppingCart
+
+@{
+    Layout = null; // Optional, depending on if you're using a layout
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Product Details</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+    <style>
+        body {
+            /* Soothing gradient background */
+            background: linear-gradient(to right, #f5f7fa, #c3cfe2);
+            min-height: 100vh;
+            margin: 0;
+            padding: 30px 0;
+        }
+
+        .card {
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border-radius: 10px;
+        }
+
+        .card-header {
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+
+        .card-footer {
+            border-bottom-left-radius: 10px;
+            border-bottom-right-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <form method="post">
+        <input type="hidden" asp-for="@Model.ProductId" />
+        <div class="container">
+            <div class="card">
+                <div class="card-header bg-light text-dark ml-0 row container">
+                    <div class="col-12 col-md-6">
+                        <h1 class="text-primary">@Model.Product.Title</h1>
+                        <p class="text-warning">by @Model.Product.Author</p>
+                    </div>
+                    <div class="col-12 col-md-6 text-md-right pt-4">
+                        <span class="badge badge-success pt-2" style="height:30px;">@Model.Product.coverType.Name</span>
+                        <span class="badge badge-warning pt-2" style="height:30px;">@Model.Product.category.Name</span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="container rounded p-2">
+                        <div class="row">
+                            <div class="col-8 col-lg-8">
+                                <div class="row pl-2">
+                                    <h5 class="text-muted">ISBN : @Model.Product.ISBN</h5>
+                                </div>
+                                <div class="row pl-2">
+                                    <h5 class="text-muted pb-2">List Price: <strike>$ @Model.Product.ListPrice.ToString("0.00")</strike></h5>
+                                </div>
+                                <div class="row text-center pl-2">
+                                    <div class="p-1 col-2 bg-secondary border-bottom">
+                                        <div>Quantity</div>
+                                    </div>
+                                    <div class="p-1 col-2 bg-secondary border-bottom">
+                                        <div>1-49</div>
+                                    </div>
+                                    <div class="p-1 col-2 bg-secondary border-bottom">
+                                        <div>50-99</div>
+                                    </div>
+                                    <div class="p-1 col-2 bg-secondary border-bottom">
+                                        <div>100+</div>
+                                    </div>
+                                </div>
+                                <div class="row text-center pl-2" style="color:maroon; font-weight:bold">
+                                    <div class="p-1 col-2 bg-secondary">
+                                        <div>Price</div>
+                                    </div>
+                                    <div class="p-1 col-2 bg-secondary">
+                                        <div>@Model.Product.Price</div>
+                                    </div>
+                                    <div class="p-1 col-2 bg-secondary">
+                                        <div>@Model.Product.Price50</div>
+                                    </div>
+                                    <div class="p-1 col-2 bg-secondary">
+                                        <div>@Model.Product.Price100</div>
+                                    </div>
+                                </div>
+                                <div class="row pl-2">
+                                    <p class="text-secondary">@Html.Raw(@Model.Product.Description)</p>
+                                </div>
+                                <div class="row pl-2">
+                                    <div class="col-2 text-primary"><h4>Count</h4></div>
+                                    <div class="col-10"><input class="form-control" asp-for="@Model.Count" /></div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-3 offset-lg-1 text-center">
+                                <img src="@Model.Product.ImageUrl" width="100%" class="rounded" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <div class="row">
+                        <div class="col-12 col-md-6 pb-1">
+                            <a class="btn btn-success form-control btn-square btn-lg" asp-action="Index" style="height:50px;">Back to List</a>
+                        </div>
+                        <div class="col-12 col-md-6 pb-1">
+                            <button type="submit" value="Add to Cart" class="btn btn-primary btn-square btn-lg form-control" style="height:50px;">Add to Cart</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</body>
+ *@</html>

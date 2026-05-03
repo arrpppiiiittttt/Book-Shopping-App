@@ -1,0 +1,187 @@
+﻿@model ecommproject2.Models.viewModels.ShoppingCartVM
+@using Microsoft.Extensions.Options
+@inject IOptions<ecommproject2.Utility.StripeSettings> stripe;
+<form method="post" > 
+    <br />
+    <div class="backgroundWhiteBorder">
+        <div class="container">
+            <div class="card">
+                <div class="card-header bg-dark text-light ml-0 row container">
+                    <div class="col-6">
+                        <i class="fa fa-shopping-cart"></i> &nbsp;
+                        Order Summary
+                    </div>
+                    <div class="col-6 text-right">
+                        <a asp-action="Index" class="btn btn-outline-info btn-sm">Back to Cart</a>
+                    </div>
+                </div>
+                <div class="card-body">
+                 
+                    <div class="form-group col-6">
+                        <label for="SelectedAddressId">Choose Address</label>
+                      @*   <select asp-for="SelectedAddressId" asp-items="Model.AnotherAddress" class="form-control">
+                            <option value="">Choose Address</option>
+                        </select> *@
+                        <select asp-for="SelectedAddressId" asp-items="Model.AnotherAddress" class="form-control" id="addressDropdown">
+                            <option value="">Choose Address</option>
+                        </select>
+
+
+                    </div>                 
+
+
+                    <div class="container rounded p-2">
+                        <div class="row">
+                            <div class="col-12 col-lg-6 pb-4">
+                                <div class="row">
+                                    <h4 class="d-flex justify-content-between align-items-center mb-3">
+                                        <span class="text-info">PickUp Details:</span>
+                                    </h4>
+                                </div>
+                                <div class="row my-1">
+                                    <div class="col-3">
+                                        <label>Name</label>
+                                    </div>
+                                    <div class="col-9">
+                                        <input type="text" class="form-control" asp-for="OrderHeader.Name" />
+                                    </div>
+                                </div>
+                                <div class="row my-1">
+                                    <div class="col-3">
+                                        <label>Phone</label>
+                                    </div>
+                                    <div class="col-9">
+                                        <input type="text" class="form-control" asp-for="OrderHeader.PhoneNumber" />
+                                    </div>
+                                </div>
+                                <div class="row my-1">
+                                    <div class="col-3">
+                                        <label>Street Address</label>
+                                    </div>
+                                    <div class="col-9">
+                                        <input type="text" class="form-control" asp-for="OrderHeader.StreetAddress" />
+                                    </div>
+                                </div>
+                                <div class="row my-1">
+                                    <div class="col-3">
+                                        <label>City</label>
+                                    </div>
+                                    <div class="col-9">
+                                        <input type="text" class="form-control" asp-for="OrderHeader.City" />
+                                    </div>
+                                </div>
+                                <div class="row my-1">
+                                    <div class="col-3">
+                                        <label>State</label>
+                                    </div>
+                                    <div class="col-9">
+                                        <input type="text" class="form-control" asp-for="OrderHeader.State" />
+                                    </div>
+                                </div>
+                                <div class="row my-1">
+                                    <div class="col-3">
+                                        <label>Postal Code</label>
+                                    </div>
+                                    <div class="col-9">
+                                        <input type="text" class="form-control" asp-for="OrderHeader.PostalCode" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-5 offset-lg-1">
+                                <h4 class="d-flex justify-content-between align-items-center mb-3">
+                                    <span class="text-info">Order Summary:</span>
+                                </h4>
+                                <ul class="list-group mb-3">
+                                    @foreach(var list in Model.ListCart)
+                                    {
+                                        <li class="list-group-item d-flex justify-content-between">
+                                            <div>
+                                                <h6 class="my-0">@list.Product.Title</h6>
+                                                <small class="text-muted">Quantity: @list.Count</small>
+                                            </div>
+                                            <span class="text-muted">$ @(list.Price * list.Count)</span>
+                                        </li>
+                                    }
+
+                                    <li class="list-group-item d-flex justify-content-between bg-light">
+                                        <small class="text-info">Total (USD)</small>
+                                        <strong class="text-info">$@Model.OrderHeader.OrderTotal</strong>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <div class="row">
+                        <div class="col-12 col-md-8 pt-2">
+                            <p style="color:maroon; font-size:14px;">Estimate Arrival Date: @DateTime.Now.AddDays(7).ToShortDateString() - @DateTime.Now.AddDays(14).ToShortDateString()</p>
+                        </div>
+                        <div class="col-12 col-md-4">
+                            @{
+                                var orderTotalAmount = Model.OrderHeader.OrderTotal * 100;
+                            }
+                            <script src="https://checkout.stripe.com/checkout.js"
+                            class="stripe-button"
+                            data-key="@stripe.Value.PublishableKey"
+                            data-amount ="@orderTotalAmount"
+                            data-description ="Get Book For Testing"
+                            data-locale = "auto"
+                            data-label ="Place Order"
+                            data-allow-remember-me="false"
+                            data-image ="https://stripe.com/img/documentation/checkout/marketplace.png">
+                            </script>
+                            <script>
+                                var el = document.getElementsByClassName('stripe-button-el');
+                                el[0].style.display = "none";
+                            </script>
+                            <button type="submit" value="Place Order" class="btn btn-success form-control">Place Order</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    <script>
+        document.getElementById('addressDropdown').addEventListener('change', function () {
+            const selectedValue = this.value;
+
+            if (selectedValue) {
+                const addressParts = selectedValue.split(',');
+
+                // Ensure the address has all 6 parts before assigning
+                if (addressParts.length === 6) {
+                    document.querySelector('[name="OrderHeader.Name"]').value = addressParts[0];
+                    document.querySelector('[name="OrderHeader.PhoneNumber"]').value = addressParts[1];
+                    document.querySelector('[name="OrderHeader.StreetAddress"]').value = addressParts[2];
+                    document.querySelector('[name="OrderHeader.City"]').value = addressParts[3];
+                    document.querySelector('[name="OrderHeader.State"]').value = addressParts[4];
+                    document.querySelector('[name="OrderHeader.PostalCode"]').value = addressParts[5];
+                }
+            } else {
+                // Optionally clear the fields if no address is selected
+                document.querySelector('[name="OrderHeader.Name"]').value = '';
+                document.querySelector('[name="OrderHeader.PhoneNumber"]').value = '';
+                document.querySelector('[name="OrderHeader.StreetAddress"]').value = '';
+                document.querySelector('[name="OrderHeader.City"]').value = '';
+                document.querySelector('[name="OrderHeader.State"]').value = '';
+                document.querySelector('[name="OrderHeader.PostalCode"]').value = '';
+            }
+        });
+    </script>
+}
+
+
+
+@* @section Scripts {
+    <script>
+        document.querySelector('[name="SelectedAddressId"]').addEventListener('change', function () {
+            const selectedId = this.value;
+            
+        });
+
+    </script>
+} *@

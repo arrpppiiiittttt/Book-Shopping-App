@@ -1,0 +1,29 @@
+﻿@model ecommproject2.Models.viewModels.OrderVM
+
+<h3>Order Details (Order ID: @Model.OrderHeader.Id)</h3>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Product ID</th>
+            <th>Title</th>
+            <th>Author</th>
+            <th>Price</th>
+            <th>Quantity</th>
+            <th>Amount</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.OrderDetails)
+        {
+            <tr>
+                <td>@item.ProductId</td>
+                <td>@item.Product.Title</td>
+                <td>@item.Product.Author</td>
+                <td>$@item.Price</td>
+                <td>@item.Count</td>
+                <td>$@(item.Price * item.Count)</td>
+            </tr>
+        }
+    </tbody>
+</table>

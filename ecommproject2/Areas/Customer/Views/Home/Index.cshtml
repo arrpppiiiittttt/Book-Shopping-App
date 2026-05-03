@@ -1,0 +1,121 @@
+﻿@model IEnumerable<ecommproject2.Models.Product>
+
+<div class="mb-3">
+    <input type="text" id="productSearch" class="form-control text-center text-black-50" placeholder="Search Books" />
+</div>
+
+<table id="tblData">
+    <thead style="display:none;">
+        <tr>
+            <th>Products</th>
+        </tr>
+    </thead>
+    <tbody id="productContainer" style="display: flex; flex-wrap: wrap; justify-content: center;">
+        @foreach (var product in Model)
+        {
+            
+            var saleCounts = ViewBag.SaleCounts as Dictionary<int, int>;
+            int saleCount = saleCounts != null && saleCounts.ContainsKey(product.Id) ? saleCounts[product.Id] : 0;
+
+            <tr class="product-row"
+                data-title="@product.Title.ToLower()"
+                data-author="@product.Author.ToLower()"
+                data-price="@product.Price.ToString("0.00")"
+                data-count="@saleCount"
+                style="display:flex; justify-content:center; margin: 10px;">
+                <td>
+                    <div class="row p-2" style="height:420px;width:320px;">
+                        <div class="col-12 p-1" style="border:1px solid #008cba; border-radius: 5px; transition: transform 0.2s; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); background-color: #ffffff;">
+                            <div class="card">
+                                <img src="@product.ImageUrl" class="card-img-top rounded" style="height:180px; width:100%; object-fit: cover;" />
+                                <div class="pl-1">
+                                    <p class="card-title h5"><b style="color:#2c3e50">@product.Title</b></p>
+                                    <p class="card-title text-primary">by <b>@product.Author</b></p>
+                                   @*  <p class="card-title text-primary">by <b>@product.IsDiscontinued</b></p> *@
+                                    <p class="card-title">
+                                        Status:
+                                        @if (product.IsDiscontinued)
+                                        {
+                                            <span class="badge bg-danger">Sold</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-success">Available</span>
+                                        }
+                                    </p>
+
+                                </div>
+                                <div style="padding-left:5px;">
+                                    <p>List Price: <strike><b>$@product.ListPrice.ToString("0.00")</b></strike></p>
+                                </div>
+                                <div style="padding-left:5px;">
+                                    <p style="color:maroon">As low as: <b>$@product.Price.ToString("0.00")</b></p>
+                                </div>
+                                <div class="row" style="padding-left:5px;">
+                                    <div class="col-6">
+                                        <p style="color:black">Sale Count <b>@saleCount</b></p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <a asp-action="Details" class="btn btn-primary form-control mt-2" asp-route-id="@product.Id">Details</a>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<script>
+    document.getElementById("productSearch").addEventListener("keyup", function () {
+        let filter = this.value.toLowerCase();
+        let rows = document.querySelectorAll(".product-row");
+
+        rows.forEach(row => {
+            let title = row.getAttribute("data-title");
+            let author = row.getAttribute("data-author");
+            let saleCount = row.getAttribute("data-count");
+            let price = row.getAttribute("data-price");
+
+            if (title.includes(filter) || author.includes(filter) || saleCount.includes(filter) || price.includes(filter)) {
+                row.style.display = "flex";
+            } else {
+                row.style.display = "none";
+            }
+        });
+    });
+</script>
+
+
+
+
+<style>
+    /* Style for the search input */
+    #productSearch {
+        border: 2px solid #dcd6e0; /* Light purple border */
+        border-radius: 10px; /* Rounded corners for smooth appearance */
+        padding: 10px 15px; /* Padding for better size */
+        font-size: 16px; /* Slightly larger text for readability */
+        transition: all 0.3s ease; /* Smooth transition on focus */
+    }
+
+        /* Text color when typing */
+        #productSearch::placeholder {
+            color: #a7a7c4; /* Light grey text for placeholder */
+        }
+
+        /* Focus effect when the user clicks on the search bar */
+        #productSearch:focus {
+            border-color: #8e44ad; /* Light purple on focus */
+            outline: none; /* Removes default outline */
+            box-shadow: 0 0 10px rgba(142, 68, 173, 0.4); /* Purple glow effect */
+        }
+
+    /* Text color when typing */
+    #productSearch {
+        color: #2c3e50; /* Dark grey text color */
+    }
+</style>
+

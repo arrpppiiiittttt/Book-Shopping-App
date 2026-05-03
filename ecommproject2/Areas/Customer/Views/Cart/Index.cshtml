@@ -1,0 +1,100 @@
+﻿@model ecommproject2.Models.viewModels.ShoppingCartVM
+<form method="get" asp-action="Summary">
+    @* <form asp-action="summary" method="get">*@    
+        <br />
+    <div class="backgroundWhiteBorder">
+        <div class="container">
+            <div class="card">
+                <div class="card-header bg-dark text-light ml-0 row container">
+                    <div class="col-6">
+                        <i class="fa fa-shopping-cart"></i> &nbsp; Shopping Cart
+                    </div>
+                    <div class="col-6 text-right">
+                        <a asp-controller="Home" asp-action="Index" class="btn btn-outline-info btn-sm">Continue Shopping</a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row align-items-center border-bottom py-2">
+                        <div class="col-1 text-center">
+                            <input type="checkbox" name="selectedIds" id="selectAll" />
+                        </div>
+                        <div class="col-11">
+                            <label for="selectAll" class="mb-0"><strong>Select All</strong></label>
+                        </div>
+                    </div>
+                    @foreach (var list in Model.ListCart)
+                    {
+                        <div class="row align-items-center border-bottom py-2">
+                            <div class="col-1 text-center">
+                                <input type="checkbox" name="selectedIds" value="@list.Id" />
+                            </div>
+                            <div class="d-none d-lg-block col-lg-1 text-center py-2">
+                                <img src="@list.Product.ImageUrl" class="rounded" width="100%" />
+                            </div>
+                            <div class="col-12 text-sm-center col-lg-5 text-lg-left">
+                                <h5><strong>@list.Product.Title</strong></h5>
+                                <p><small>@Html.Raw(list.Product.Description)</small></p>
+                            </div>
+                            <div class="col-12 text-sm-center col-lg-5 text-lg-right row">
+                                <div class="col-4 text-md-right" style="padding-top:5px;">
+                                    <h6><strong>@list.Price <span class="text-muted">x</span> @list.Count = @(list.Price * list.Count)</strong></h6>
+                                </div>
+                                <div class="col-6 col-sm-4 col-lg-6">
+                                    <div class="float-right mx-1">
+                                        <a asp-action="plus" asp-route-id="@list.Id" class="btn btn-primary">
+                                            <i class="fas fa-plus"></i>
+                                        </a>
+                                    </div>
+                                    <div class="float-right mx-1">
+                                        <a asp-action="minus" asp-route-id="@list.Id" class="btn btn-danger">
+                                            <i class="fas fa-minus"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="col-2 col-sm-4 col-lg-2 text-right">
+                                    <a asp-action="delete" asp-route-id="@list.Id" class="btn btn-outline-danger">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    <hr />
+                    <li class="list-group-item d-flex justify-content-between bg-light">
+                        <small class="text-info">Total (USD)</small>
+                        <strong class="text-info">$@Model.OrderHeader.OrderTotal</strong>
+                    </li>
+                    <div class="card-footer">
+                        <div class="card-footer row">
+                            @if (!Model.OrderHeader.ApplicationUser.EmailConfirmed)
+                            {
+                                <div class="col-8 @ViewBag.EmailCSS">
+                                    @ViewBag.EmailMessage
+                                </div>
+                                <div class="col-4">
+                                    <button type="submit" class="btn btn-outline-warning">
+                                        Click here to resend Email Confirmation !!!
+                                    </button>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="col-sm-12 col-lg-4 col-md-6 offset-lg-8 offset-md-6">
+                                    <button type="submit" class="btn btn-success form-control">Summary</button>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<script>
+    document.getElementById("selectAll").addEventListener("change", function () {
+        var checkboxes = document.querySelectorAll("input[name='selectedIds']");
+        for (var i = 0; i < checkboxes.length; i++) {
+            checkboxes[i].checked = this.checked;
+        }
+    });
+</script>
